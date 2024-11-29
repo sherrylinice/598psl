@@ -4,7 +4,6 @@ import numpy as np
 import pickle
 from scipy.sparse import load_npz
 
-# Cache the data loading functions
 @st.cache_data
 def load_movies():
     data_url = 'https://liangfgithub.github.io/MovieData/'
@@ -124,7 +123,6 @@ st.markdown("""
     .element-container {
         margin-bottom: 0px;
     }
-    /* Align movie posters and add a bar above each row */
     .movie-poster {
         display: flex;
         flex-direction: column;
@@ -148,7 +146,7 @@ newuser = np.full(len(movie_ids), np.nan)
 
 # Display movies and collect ratings
 user_ratings = {}
-cols_per_row = 6  # Number of movies per row
+cols_per_row = 8  # Number of movies per row
 
 # Limit the display to 100 movies
 sample_movie_ids = popular_movies['MovieID'].head(100).tolist()
@@ -156,7 +154,6 @@ sample_movie_ids = popular_movies['MovieID'].head(100).tolist()
 # Display movies without the container box
 rows = len(sample_movie_ids) // cols_per_row + (len(sample_movie_ids) % cols_per_row > 0)
 for row in range(rows):
-    # Add a bar above each row to visually align the posters
     st.markdown('<div class="movie-row">', unsafe_allow_html=True)
     cols = st.columns(cols_per_row)
     for idx in range(cols_per_row):
@@ -194,7 +191,7 @@ st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
 if st.button('Get recommendations'):
     recommendations = myIBCF(newuser)
     st.write('Top 10 Movie Recommendations for You:')
-    cols_per_row = 6
+    cols_per_row = 8
     for row in range(2):
         cols = st.columns(cols_per_row)
         for idx in range(cols_per_row):
