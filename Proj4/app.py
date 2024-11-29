@@ -21,16 +21,16 @@ def load_movies():
 
 @st.cache_data
 def load_popular_movies():
-    popular_movies = pd.read_csv('popular_movies.csv')
+    popular_movies = pd.read_csv('Proj4/popular_movies.csv')
     popular_movies['MovieID'] = popular_movies['MovieID'].astype(int)
     return popular_movies
 
 @st.cache_resource
 def load_resources():
-    S_top = load_npz('S_top.npz')
-    with open('movie_ids.pkl', 'rb') as f:
+    S_top = load_npz('Proj4/S_top.npz')
+    with open('Proj4/movie_ids.pkl', 'rb') as f:
         movie_ids = pickle.load(f)
-    with open('movie_id_to_index.pkl', 'rb') as f:
+    with open('Proj4/movie_id_to_index.pkl', 'rb') as f:
         movie_id_to_index = pickle.load(f)
     return S_top, movie_ids, movie_id_to_index
 
