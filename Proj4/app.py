@@ -146,7 +146,7 @@ newuser = np.full(len(movie_ids), np.nan)
 
 # Display movies and collect ratings
 user_ratings = {}
-cols_per_row = 8  # Number of movies per row
+cols_per_row = 6  # Number of movies per row
 
 # Limit the display to 100 movies
 sample_movie_ids = popular_movies['MovieID'].head(100).tolist()
@@ -191,7 +191,7 @@ st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
 if st.button('Get recommendations'):
     recommendations = myIBCF(newuser)
     st.write('Top 10 Movie Recommendations for You:')
-    cols_per_row = 8
+    cols_per_row = 6
     for row in range(2):
         cols = st.columns(cols_per_row)
         for idx in range(cols_per_row):
