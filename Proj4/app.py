@@ -120,8 +120,15 @@ st.markdown("""
         margin-left: auto;  
         margin-right: auto;
     }
-    div[data-baseweb="slider"] .css-qrbaxs {
-        background-color: #007bff;  /* Blue slider bar */
+    div[data-baseweb="slider"] > div > div {
+        background-color: #007bff !important;  /* Blue slider bar */
+    }
+    div[data-baseweb="slider"] > div > div > div {
+        background-color: #0056b3 !important;  /* Darker blue for the slider fill */
+    }
+    div[data-baseweb="slider"] > div > div[role="slider"] {
+        background-color: #004080 !important;  /* Dark blue for the slider thumb */
+        border: 2px solid #ffffff;  /* White border for the thumb */
     }
     .element-container {
         margin-bottom: 0px;
