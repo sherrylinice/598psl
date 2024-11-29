@@ -105,9 +105,9 @@ st.markdown("""
         background-color: #0056b3;  /* Darker blue on hover */
         color: white;
     }
-    .stButton > button:active {
+    .stButton > button:active, .stButton > button:focus {
         background-color: #004080;  /* Even darker blue on click */
-        color: white;
+        color: white !important;  /* Force white text color */
     }
     h5 {
         font-size: 1.2rem;
@@ -119,6 +119,9 @@ st.markdown("""
         max-width: 90px;
         margin-left: auto;  
         margin-right: auto;
+    }
+    div[data-baseweb="slider"] .css-qrbaxs {
+        background-color: #007bff;  /* Blue slider bar */
     }
     .element-container {
         margin-bottom: 0px;
