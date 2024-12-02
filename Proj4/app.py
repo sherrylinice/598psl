@@ -136,22 +136,18 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Heading with bold and smaller font
 st.markdown("<h5>First, tell us what you love! Rate the following movies as many as possible.</h5>", unsafe_allow_html=True)
 st.markdown("<div style='font-size: 1.2rem; color: #007bff; margin-bottom: 5px;'><strong>Next, scroll down to get your next favorite movie! 🎥</strong></div>", unsafe_allow_html=True)
 st.markdown("<div style='font-size: 0.9rem; color: #6c757d;'>0 = Least Like, 5 = Most Like</div>", unsafe_allow_html=True)
 
-# Initialize a new user rating vector
 newuser = np.full(len(movie_ids), np.nan)
 
-# Display movies and collect ratings
 user_ratings = {}
 cols_per_row = 6  # Number of movies per row
 
 # Limit the display to 100 movies
 sample_movie_ids = popular_movies['MovieID'].head(100).tolist()
 
-# Display movies without the container box
 rows = len(sample_movie_ids) // cols_per_row + (len(sample_movie_ids) % cols_per_row > 0)
 for row in range(rows):
     st.markdown('<div class="movie-row">', unsafe_allow_html=True)
