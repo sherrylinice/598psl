@@ -17,13 +17,13 @@ def load_movies():
     movies['MovieID'] = movies['MovieID'].astype(int)
     movies.set_index('MovieID', inplace=True)
     return movies
-
+    
 @st.cache_data
 def load_popular_movies():
     popular_movies = pd.read_csv('Proj4/popular_movies.csv')
     popular_movies['MovieID'] = popular_movies['MovieID'].astype(int)
     return popular_movies
-
+    
 @st.cache_resource
 def load_resources():
     S_top = load_npz('Proj4/S_top.npz')
@@ -32,11 +32,11 @@ def load_resources():
     with open('Proj4/movie_id_to_index.pkl', 'rb') as f:
         movie_id_to_index = pickle.load(f)
     return S_top, movie_ids, movie_id_to_index
-
+    
 def myIBCF(newuser):
     S_top, movie_ids, movie_id_to_index = load_resources()
     rated_indices = np.where(~np.isnan(newuser))[0]
-
+    
     predictions = {}
     for i in range(len(newuser)):
         if np.isnan(newuser[i]):
@@ -57,28 +57,28 @@ def myIBCF(newuser):
             if denominator != 0:
                 pred = numerator / denominator
                 predictions[i] = pred
-
+                
     if predictions:
         pred_series = pd.Series(predictions)
         pred_series = pred_series.sort_values(ascending=False)
         top_indices = pred_series.index.tolist()
     else:
         top_indices = []
-
+        
     # Fallback to popular movies if needed
     popular_movies = load_popular_movies()
     rated_movie_ids = [movie_ids[idx] for idx in rated_indices]
     additional_movies = popular_movies[~popular_movies['MovieID'].isin(rated_movie_ids)]
-
+    
     recommended_movie_ids = [movie_ids[idx] for idx in top_indices]
     while len(recommended_movie_ids) < 10 and not additional_movies.empty:
         next_movie_id = additional_movies.iloc[0]['MovieID']
         additional_movies = additional_movies.iloc[1:]
         if next_movie_id not in recommended_movie_ids:
             recommended_movie_ids.append(next_movie_id)
-
+            
     return recommended_movie_ids[:10]
-
+    
 # Load data
 movies = load_movies()
 popular_movies = load_popular_movies()
@@ -185,7 +185,7 @@ for row in range(rows):
                     idx_in_newuser = movie_id_to_index[mid]
                     newuser[idx_in_newuser] = rating
     st.markdown('</div>', unsafe_allow_html=True)
-
+    
 # Recommendation button
 st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
 if st.button('Get recommendations'):
