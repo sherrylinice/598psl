@@ -35,9 +35,7 @@ def load_resources():
 
 def myIBCF(newuser):
     S_top, movie_ids, movie_id_to_index = load_resources()
-    
     rated_indices = np.where(~np.isnan(newuser))[0]
-    #rated_ratings = newuser[rated_indices]
 
     predictions = {}
     for i in range(len(newuser)):
@@ -63,28 +61,21 @@ def myIBCF(newuser):
     if predictions:
         pred_series = pd.Series(predictions)
         pred_series = pred_series.sort_values(ascending=False)
-        top_indices = pred_series.index[:10].tolist()
-        #top_predictions = pred_series.iloc[:10].tolist()
+        top_indices = pred_series.index.tolist()
     else:
         top_indices = []
-        #top_predictions = []
 
+    # Fallback to popular movies if needed
     popular_movies = load_popular_movies()
     rated_movie_ids = [movie_ids[idx] for idx in rated_indices]
     additional_movies = popular_movies[~popular_movies['MovieID'].isin(rated_movie_ids)]
-    
+
     recommended_movie_ids = [movie_ids[idx] for idx in top_indices]
-    #predicted_ratings = top_predictions
-    
     while len(recommended_movie_ids) < 10 and not additional_movies.empty:
         next_movie_id = additional_movies.iloc[0]['MovieID']
         additional_movies = additional_movies.iloc[1:]
         if next_movie_id not in recommended_movie_ids:
             recommended_movie_ids.append(next_movie_id)
-            #predicted_ratings.append(None)  
-
-    #top_ten_movie_names = ["m" + str(mid) for mid in recommended_movie_ids[:10]]
-    #predicted_ratings = predicted_ratings[:10]
 
     return recommended_movie_ids[:10]
 
@@ -145,18 +136,22 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# Heading with bold and smaller font
 st.markdown("<h5>First, tell us what you love! Rate the following movies as many as possible.</h5>", unsafe_allow_html=True)
 st.markdown("<div style='font-size: 1.2rem; color: #007bff; margin-bottom: 5px;'><strong>Next, scroll down to get your next favorite movie! 🎥</strong></div>", unsafe_allow_html=True)
 st.markdown("<div style='font-size: 0.9rem; color: #6c757d;'>0 = Least Like, 5 = Most Like</div>", unsafe_allow_html=True)
 
+# Initialize a new user rating vector
 newuser = np.full(len(movie_ids), np.nan)
 
+# Display movies and collect ratings
 user_ratings = {}
 cols_per_row = 6  # Number of movies per row
 
 # Limit the display to 100 movies
 sample_movie_ids = popular_movies['MovieID'].head(100).tolist()
 
+# Display movies without the container box
 rows = len(sample_movie_ids) // cols_per_row + (len(sample_movie_ids) % cols_per_row > 0)
 for row in range(rows):
     st.markdown('<div class="movie-row">', unsafe_allow_html=True)
@@ -194,7 +189,7 @@ for row in range(rows):
 # Recommendation button
 st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
 if st.button('Get recommendations'):
-    recommendations, ratings = myIBCF(newuser)
+    recommendations = myIBCF(newuser)
     st.write('Top 10 Movie Recommendations for You:')
     cols_per_row = 6
     for row in range(2):
