@@ -37,7 +37,7 @@ def myIBCF(newuser):
     S_top, movie_ids, movie_id_to_index = load_resources()
     
     rated_indices = np.where(~np.isnan(newuser))[0]
-    rated_ratings = newuser[rated_indices]
+    #rated_ratings = newuser[rated_indices]
 
     predictions = {}
     for i in range(len(newuser)):
@@ -64,29 +64,29 @@ def myIBCF(newuser):
         pred_series = pd.Series(predictions)
         pred_series = pred_series.sort_values(ascending=False)
         top_indices = pred_series.index[:10].tolist()
-        top_predictions = pred_series.iloc[:10].tolist()
+        #top_predictions = pred_series.iloc[:10].tolist()
     else:
         top_indices = []
-        top_predictions = []
+        #top_predictions = []
 
     popular_movies = load_popular_movies()
     rated_movie_ids = [movie_ids[idx] for idx in rated_indices]
     additional_movies = popular_movies[~popular_movies['MovieID'].isin(rated_movie_ids)]
-    additional_movie_ids = additional_movies['MovieID'].tolist()
-
-    recommended_movie_ids = [movie_ids[idx] for idx in top_indices]
-    predicted_ratings = top_predictions
     
-    while len(recommended_movie_ids) < 10 and additional_movie_ids:
-        next_movie_id = additional_movie_ids.pop(0)
+    recommended_movie_ids = [movie_ids[idx] for idx in top_indices]
+    #predicted_ratings = top_predictions
+    
+    while len(recommended_movie_ids) < 10 and not additional_movies.empty:
+        next_movie_id = additional_movies.iloc[0]['MovieID']
+        additional_movies = additional_movies.iloc[1:]
         if next_movie_id not in recommended_movie_ids:
             recommended_movie_ids.append(next_movie_id)
-            predicted_ratings.append(None)  
+            #predicted_ratings.append(None)  
 
-    top_ten_movie_names = ["m" + str(mid) for mid in recommended_movie_ids[:10]]
-    predicted_ratings = predicted_ratings[:10]
+    #top_ten_movie_names = ["m" + str(mid) for mid in recommended_movie_ids[:10]]
+    #predicted_ratings = predicted_ratings[:10]
 
-    return top_ten_movie_names, predicted_ratings
+    return recommended_movie_ids[:10]
 
 # Load data
 movies = load_movies()
