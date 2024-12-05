@@ -34,13 +34,8 @@ def load_resources():
     return S_top, movie_ids, movie_id_to_index
 
 def myIBCF(newuser):
-    S_top = load_npz('S_top.npz')
-    with open('movie_ids.pkl', 'rb') as f:
-        movie_ids = pickle.load(f)
-    with open('movie_id_to_index.pkl', 'rb') as f:
-        movie_id_to_index = pickle.load(f)
-
-    # Find indices of movies rated by the new user
+    S_top, movie_ids, movie_id_to_index = load_resources()
+    
     rated_indices = np.where(~np.isnan(newuser))[0]
     rated_ratings = newuser[rated_indices]
 
@@ -53,7 +48,6 @@ def myIBCF(newuser):
             data = S_top.data[start:end]
             if len(data) == 0:
                 continue
-            # Filter indices to include only movies rated by the user
             mask = np.in1d(indices, rated_indices)
             indices_filtered = indices[mask]
             data_filtered = data[mask]
@@ -66,7 +60,6 @@ def myIBCF(newuser):
                 pred = numerator / denominator
                 predictions[i] = pred
 
-    # Get top 10 recommendations
     if predictions:
         pred_series = pd.Series(predictions)
         pred_series = pred_series.sort_values(ascending=False)
@@ -76,18 +69,19 @@ def myIBCF(newuser):
         top_indices = []
         top_predictions = []
 
-    popular_movies = pd.read_csv('popular_movies.csv')
+    popular_movies = load_popular_movies()
     rated_movie_ids = [movie_ids[idx] for idx in rated_indices]
     additional_movies = popular_movies[~popular_movies['MovieID'].isin(rated_movie_ids)]
     additional_movie_ids = additional_movies['MovieID'].tolist()
 
     recommended_movie_ids = [movie_ids[idx] for idx in top_indices]
     predicted_ratings = top_predictions
+    
     while len(recommended_movie_ids) < 10 and additional_movie_ids:
         next_movie_id = additional_movie_ids.pop(0)
         if next_movie_id not in recommended_movie_ids:
             recommended_movie_ids.append(next_movie_id)
-            predicted_ratings.append(None)  # No predicted rating for fallback movies
+            predicted_ratings.append(None)  
 
     top_ten_movie_names = ["m" + str(mid) for mid in recommended_movie_ids[:10]]
     predicted_ratings = predicted_ratings[:10]
